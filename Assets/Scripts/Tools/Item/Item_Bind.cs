@@ -1,22 +1,22 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-public class Item_Bind : Item
+public class Item_Bind : ItemBase
 {
     //public AudioSource   SFX;
     public float duration = 8.0f;
 
     void Awake()
     {
-        itemID = 2001;
-        itemType = ItemType.TRAP;
-        itemName = "바인드";
-        itemCount = 0;
-        itemDesc = "8초간 발이 묶임";
+        item.itemID = 2001;
+        item.itemType = ItemType.TRAP;
+        item.itemName = "바인드";
+        item.itemCount = 0;
+        item.itemDesc = "8초간 발이 묶임";
     }
-    public override void Item_Active()
+    public override void Init(GameObject _Obj)
     {
-        CharacterController owner = gameObject.GetComponentInParent<CharacterController>();
+        CharacterController owner = _Obj.GetComponentInParent<CharacterController>();
         StartCoroutine(RecoverySpeed(owner));
     }
 
@@ -27,10 +27,5 @@ public class Item_Bind : Item
         yield return new WaitForSeconds(duration);
         _Owner.moveSpeed = oriSpeed;
         yield return null;
-    }
-
-    public override void Item_Passive()
-    {
-        // 라운드 종료
     }
 }

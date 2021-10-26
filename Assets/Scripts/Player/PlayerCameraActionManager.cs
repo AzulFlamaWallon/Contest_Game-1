@@ -8,7 +8,6 @@ public class PlayerCameraActionManager : SingleToneMonoBehaviour<PlayerCameraAct
 
     private void Start() 
     {
-        DeathCamAction = DeathCam.Instance;  
     }
 
     public void StartDeathCamAction()

@@ -1,62 +1,33 @@
 ﻿using System;
+using UnityEngine;
 using Network.Data;
 
+[CreateAssetMenu(fileName = "Item", menuName = "GreyZoneTools/Create Item")]
 [Serializable]
-public abstract class Item : Tool
+public class Item : ScriptableObject
 {
     public Item_Data item_data;
     public ushort itemID;
     public ItemType itemType;
     public string itemName;
     public string itemDesc;
-    public bool isUseEnergy;
     public byte itemCount;
-    public ushort itemEnergy;
-
-    public bool isActive;
 
     public Item() { }
-    public Item(ushort _ID,
-                ItemType _Type,
-                string _Name,
-                string _Desc,
-                byte _Count,
-                bool _UseEnergy = false,
-                ushort _Energy = 0,
-                bool _IsActive = false)
+    public Item(ushort _ID, ItemType _Type, string _Name, string _Desc, byte _Count)
     {
         itemID = _ID;
         itemType = _Type;
         itemName = _Name;
         itemDesc = _Desc;
-        itemCount = _Count;
-        isUseEnergy = _UseEnergy;
-        if (isUseEnergy)
-        {
-            itemEnergy = _Energy;
-        }
-        isActive = _IsActive;
+        itemCount = _Count;       
     }
-
-    void Start()
+    
+    public void SetItemData(Vector3 _Pos, Vector3 _Rot)
     {
-        if (!isActive)
-            Item_Passive();
+        item_data.Position = _Pos;
+        item_data.Rotation = _Rot;
     }
-    public override void onFire(bool _pressed)
-    {
-        if (!_pressed)
-            return;
-        Item_Active();
-    }
-
-    public override void onInteract(bool _pressed)
-    {
-    }
-
-
-    public abstract void Item_Active();
-    public abstract void Item_Passive();
 }
 
 [Flags]

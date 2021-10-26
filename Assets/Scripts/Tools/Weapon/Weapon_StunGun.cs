@@ -33,6 +33,9 @@ public class Weapon_StunGun : Tool, I_IK_Shotable
     public ushort weapon_uid = 5001;
     private bool m_ThiefShotAble = true;
 
+    List<UInt16>  victim_IDs = new List<UInt16>();
+    List<Vector3> impact_Pos = new List<Vector3>();
+
 
     public AnimationClip Get_Aim_Anim()
     {
@@ -75,14 +78,13 @@ public class Weapon_StunGun : Tool, I_IK_Shotable
         // This Add HitScan Logic
         Vector3 fwdDir = attacker.m_CameraAxis.forward;
 
-        List<UInt16> victim_IDs = new List<UInt16>();
-        List<Vector3> impact_Pos = new List<Vector3>();
+        
 
         sfx_Fire.PlayOneShot(sfx_Fire.clip); // Play Sound
 
         pelletTrail.pellet = pelletInfo; // 펠릿트레일의 펠릿에 커스텀한 펠릿정보를 보내주자.
 
-        for (byte i = 0; i < pelletTrail.pellet.pelletCount; i++)
+        for (byte i = 0; i < pelletTrail.pellet.pelletCount; i++) // 풀링으로 교체해주자.
         {
             Ray ray = new Ray(attacker.m_CameraAxis.position + fwdDir * 2f, fwdDir);
             RaycastHit hit;

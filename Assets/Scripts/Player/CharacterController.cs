@@ -140,7 +140,7 @@ public class CharacterController : MonoBehaviour
 
     IEnumerator Update_FieldOnItem()
     {
-        yield return new WaitForSecondsRealtime(10.0f);
+        yield return new WaitForSecondsRealtime(5.0f);
         while (true)
         {
             yield return new WaitForSeconds(itemSearchDuration);
@@ -500,101 +500,109 @@ public class CharacterController : MonoBehaviour
         m_Is_Stunned = false;
         yield return null;
     }
+    /// <summary>
+    /// 내 세션이 맞는지 확인
+    /// </summary>
+    /// <returns></returns>
+    bool IsMyCharacter()
+    {
+        if(Manager_Ingame.Instance.m_Client_Profile.Session_ID == m_MyProfile.Session_ID)
+        {
+            return true;
+        }
+        return false;
+    }
 
     /// <summary>
     /// 아이템을 습득합니다.
     /// </summary>
     public void AcquireItem()
     {
-        Item item = FindViewInItem(); // 만약 아이템을 발견했다면 해당 아이템을 가져와서
-        Debug.Log("아이템명칭 : " + item.itemName + "," + "반환받은 객체이름 : " + item.name);
+        ItemBase item = FindViewInItem(); // 만약 아이템을 발견했다면 해당 아이템을 가져와서
+        Debug.Log("아이템명칭 : " + item.item.itemName + "," + "반환받은 객체이름 : " + item.name);
         if (item != null && Manager_Network.Instance != null) // 통신이 안끊겼고, 아이템일때
         {
             if (Manager_Ingame.Instance.m_Client_Profile.Session_ID == m_MyProfile.Session_ID) // 습득자랑 현재 내 세션아디가 일치한다면 쏘자.
             {
                 // TODO : 캐릭터가 발견한 아이템정보를 서버에 보내서, 습득 완료 및 캐릭터에 종속시키는 부분이 들어오면 될거같아요.
-                Packet_Sender.Send_Item_Get(item.item_data.IID);
+                Packet_Sender.Send_Item_Get(item.item.item_data.IID);
                 
                 TooltipManager.Instance.tooltip_ScreenMsg.ShowMessage(MessageStyle.ON_SCREEN_UP_MSG, item.name + "을/를" + "습득");
             }
         }
-
-        return;
     }
+
     // TODO. 아이템 탐색 알고리즘 부분인데, 너무 급한 나머지 일단 코드가 개판입니다 ㅈㅅㅈㅅ
     /// <summary>
     /// 아이템을 탐색합니다.
     /// </summary>
     /// <returns></returns>
-    Item FindViewInItem()
-    {   
+    ItemBase FindViewInItem()
+    {
         Collider[] colliders = Physics.OverlapSphere(m_MyProfile.Current_Pos, acquireDist, ItemLayer); // O자형태로, 탐색거리만큼 아이템 콜라이더 취득
         for (int i = 0; i < colliders.Length; i++)
         {
             Vector3 hitPos = colliders[i].transform.position;
             Vector3 dir = (hitPos - m_MyProfile.Current_Pos).normalized;
 
-            if (dir.sqrMagnitude < acquireDist) // 범위안에 들어왔을때
+            if (dir.sqrMagnitude < acquireDist && m_MyProfile.User_Input.Interact) // 범위안에 들어와서 눌렀을때
             {
-                if (m_MyProfile.User_Input.Interact)
+                // 중간 장애물이 없을때
+                if (Physics.Raycast(m_MyProfile.Current_Pos, dir, out RaycastHit hitinfo, acquireDist, ItemLayer.value))
                 {
-                    // 중간 장애물이 없을때
-                    if (Physics.Raycast(m_MyProfile.Current_Pos, dir, out RaycastHit hitinfo, acquireDist, ~ItemLayer.value))
-                    {
-                        //Debug.Log("해당 장소엔 아이템이 존재하지 않습니다.");
-                        Debug.DrawLine(m_MyProfile.Current_Pos, hitinfo.point, Color.red);
-                        IsHit = false;
-                        return null;
-                    }
-                    else
-                    {
-                        Debug.DrawLine(m_MyProfile.Current_Pos, hitPos, Color.blue);
-                        IsHit = true;
-                        Item item = colliders[i].GetComponent<Item>();
-                        return item;
-                    }
+                    Debug.Log("와 템 주웠음");
+                    Debug.DrawLine(m_MyProfile.Current_Pos, hitinfo.point, Color.red);
+                    IsHit = false;
+                    return hitinfo.collider.GetComponentInChildren<ItemBase>();
+                }
+                else
+                {
+                    Debug.DrawLine(m_MyProfile.Current_Pos, hitPos, Color.blue);
+                    IsHit = false;
+                }             
+            }
+        }
+
+        return null;
+    }
+
+    ItemBase FindViewInNoPressItem()
+    {
+        Collider[] colliders = Physics.OverlapSphere(m_MyProfile.Current_Pos, acquireDist, ItemLayer.value); // O자형태로, 탐색거리만큼 아이템 콜라이더 취득
+        for (int i = 0; i < colliders.Length; i++) // 취득한 콜라이더들을 확인해보자.
+        {
+            Vector3 hitPos = colliders[i].transform.position;
+            Vector3 dir = (hitPos - m_MyProfile.Current_Pos).normalized;
+
+            if (dir.sqrMagnitude < acquireDist) // 범위안에 들어왔을때
+            {               
+                if (Physics.Raycast(m_MyProfile.Current_Pos, dir, out RaycastHit hitinfo, acquireDist, ItemLayer.value))
+                {                 
+                    Debug.DrawLine(m_MyProfile.Current_Pos, hitinfo.point, Color.red);
+                    Debug.Log("해당 장소엔 아이템이 있습니다");
+                    IsHit = false;
+                    return hitinfo.collider.GetComponentInChildren<ItemBase>(); // 해당 아이템 반환
+                }
+                else
+                {
+                    Debug.DrawLine(m_MyProfile.Current_Pos, hitPos, Color.blue);
+                    IsHit = true;
+                   
+                    Debug.Log("해당 장소엔 아이템이 존재하지 않습니다.");
                 }
             }
         }
         return null;
     }
 
-    Item FindViewInNoPressItem()
-    {
-        Collider[] colliders = Physics.OverlapSphere(m_MyProfile.Current_Pos, acquireDist, ItemLayer.value); // O자형태로, 탐색거리만큼 아이템 콜라이더 취득
-        foreach (var hits in colliders) // 취득한 콜라이더들을 확인해보자.
-        {
-            Vector3 hitPos = hits.transform.position;
-            Vector3 dir = (hitPos - m_MyProfile.Current_Pos).normalized;
-
-            if (dir.sqrMagnitude < acquireDist) // 범위안에 들어왔을때
-            {
-                if (Physics.Raycast(m_MyProfile.Current_Pos, dir, out RaycastHit hitinfo, acquireDist, ~ItemLayer.value))
-                {
-                    Debug.Log("해당 장소엔 아이템이 존재하지 않습니다.");
-                    Debug.DrawLine(m_MyProfile.Current_Pos, hitinfo.point, Color.red);
-                    IsHit = false;
-                    return null;
-                }
-                else
-                {
-                    Debug.DrawLine(m_MyProfile.Current_Pos, hitPos, Color.blue);
-                    IsHit = true;
-                    return hits.GetComponent<Item>(); // 해당 아이템 반환
-                }
-            }
-        }
-        return null;
-    }    
-
     void FindOnFieldItem()
     {   
-        Item item = FindViewInNoPressItem();
+        ItemBase item = FindViewInNoPressItem();
         if (item != null)
         {
-            TooltipManager.Instance.tooltip_HeadMessage.ViewSideInItemMessage(item, m_MyProfile.Current_Pos, acquireDist);          
+            TooltipManager.Instance.tooltip_HeadMessage.ViewSideInItemMessage(item.item, item.item.item_data.Position, m_MyProfile.Current_Pos, acquireDist);          
             TooltipManager.Instance.tooltip_HeadMessage.DrawOnHeadMessage(this.gameObject);
-            TooltipManager.Instance.tooltip_ScreenMsg.ShowMessage(MessageStyle.ON_SCREEN_UP_MSG, item.name + "을 찾음");
+            TooltipManager.Instance.tooltip_ScreenMsg.ShowMessage(MessageStyle.ON_SCREEN_UP_MSG, item.item.name + "을 찾음");
         }
         else
         {
@@ -603,7 +611,7 @@ public class CharacterController : MonoBehaviour
         }
     }
 
-#if UNITY_EDITOR
+    /*
     private void OnDrawGizmosSelected()
      {
         FindViewInItem();
@@ -611,6 +619,6 @@ public class CharacterController : MonoBehaviour
         Handles.color = IsHit ? Color.cyan : Color.green;
         Handles.DrawSolidArc(m_CameraAxis.position, Vector3.up, m_CameraAxis.forward, 45 / 2, acquireDist);
         Handles.DrawSolidArc(m_CameraAxis.position, Vector3.up, m_CameraAxis.forward, -45 / 2, acquireDist);
-     }
-#endif
+     }*/
+
 }

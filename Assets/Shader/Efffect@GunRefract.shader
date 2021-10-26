@@ -36,18 +36,18 @@
 
         void surf (Input _IN, inout SurfaceOutput o)
         {
-            float4 ref = tex2D(_MainTex, _IN.uv_MainTex);
+            float4 reff = tex2D(_MainTex, _IN.uv_MainTex);
 
             float3 screenUV = _IN.screenPos.rgb / _IN.screenPos.a;
 
             if(_UseRefColor)
             {
                 screenUV.rgb = _RefColor;
-                o.Emission = tex2D(_GrabTexture, (screenUV.xy + ref.x * _RefPow));
+                o.Emission = tex2D(_GrabTexture, (screenUV.xy + reff.x * _RefPow));
             }
             else
             {
-                o.Emission = tex2D(_GrabTexture, (screenUV.xy + ref.x * _RefPow));
+                o.Emission = tex2D(_GrabTexture, (screenUV.xy + reff.x * _RefPow));
             }
         }
 

@@ -1,25 +1,24 @@
 ﻿using UnityEngine;
 
-public class Item_BatteryRecovery : Item
+public class Item_BatteryRecovery : ItemBase
 {
     public ushort chargeAmount;
+
     void Awake()
     {
-        itemID = 4;
-        itemType = ItemType.SYSTEM;
-        itemName = "충전소";
-        itemCount = 0;
-        itemDesc = "배터리 충전 오브젝트";
-    }
-    public override void Item_Active()
-    {
+        item.itemID = 4;
+        item.itemType = ItemType.SYSTEM;
+        item.itemName = "충전소";
+        item.itemCount = 0;
+        item.itemDesc = "배터리 충전 오브젝트";
     }
 
-    public override void Item_Passive()
+    public override void Init(GameObject _Obj)
     {
+        
     }
 
-    private void OnTriggerEnter(Collider other)
+    void OnTriggerEnter(Collider other)
     {
         CharacterController character = other.gameObject.GetComponentInParent<CharacterController>();
         if (character.m_MyProfile.Battery < character.battery)

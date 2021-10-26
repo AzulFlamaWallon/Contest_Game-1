@@ -208,7 +208,7 @@ public class @PlayerInputAction : IInputActionCollection, IDisposable
                     ""name"": """",
                     ""id"": ""55a6cc97-08d2-487d-9fa8-a3a3fa44f0d4"",
                     ""path"": ""<Keyboard>/E"",
-                    ""interactions"": """",
+                    ""interactions"": ""Press(behavior=2)"",
                     ""processors"": """",
                     ""groups"": ""Keyboard"",
                     ""action"": ""Interact"",

@@ -1,20 +1,32 @@
 ﻿using System.Linq;
 using UnityEngine;
 
-public class Item_AntiTrap : Item
+public class Item_AntiTrap : ItemBase
 {
     public bool IsUseRange = false;
     public float Range;
+
     public void Awake()
     {
-        itemID = 1002;
-        itemType = ItemType.REINFORCE;
-        itemName = "안티";
-        itemCount = 0;
-        itemDesc = "함정 무력화";
+        item.itemID = 1002;
+        item.itemType = ItemType.REINFORCE;
+        item.itemName = "안티";
+        item.itemCount = 0;
+        item.itemDesc = "함정 무력화";
     }
-    public override void Item_Active()
+
+    public override void Init(GameObject _Obj)
     {
+        
+    }
+
+    public override void onInteract(bool _pressed)
+    {
+        if (!_pressed)
+        {
+            return;
+        }
+
         Vector3 ownerpos = GetComponentInParent<GameObject>().transform.position;
 
         if (IsUseRange)
@@ -22,7 +34,7 @@ public class Item_AntiTrap : Item
             Collider[] colliders = Physics.OverlapSphere(ownerpos, Range);
 
             Collider collider;
-            if (colliders.Any((x) => (x.GetComponent<Item>().itemType == ItemType.TRAP)))
+            if (colliders.Any((x) => x.GetComponent<Item>().itemType == ItemType.TRAP))
             {
                 for (int i = 0; i < colliders.Length; i++)
                 {
@@ -36,13 +48,9 @@ public class Item_AntiTrap : Item
         }
         else
         {
-            // 젠장 함정무력화를 어캐처리한담
+            
 
         }//Physics.OverlapSphere(, Range).Any((x) => x.CompareTag("Trap"))
     }
 
-    public override void Item_Passive()
-    {
-
-    }
 }

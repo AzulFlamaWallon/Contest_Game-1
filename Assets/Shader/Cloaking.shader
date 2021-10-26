@@ -85,6 +85,7 @@
 
             o.Normal = UnpackNormal(tex2D (_BumpMap, IN.uv_MainTex));
 
+			// Setting_Dissolve 
 			float4 noise = tex2D(_NoiseTex, IN.uv_NoiseTex);
 			float alpha = step(_CutRender, noise.r);
 			float outline = step(noise.r, _CutRender * _OutThinkness);

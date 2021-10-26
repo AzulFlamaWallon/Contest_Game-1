@@ -25,7 +25,6 @@ namespace Greyzone.GUI
 
         public void ShowMessage(MessageStyle _MsgStyle, string _Desc, Vector3 _TargetPos = default)
         {
- 
             gameObject.SetActive(true);
             switch(_MsgStyle)
             {
@@ -60,24 +59,24 @@ namespace Greyzone.GUI
             gameObject.SetActive(false);
         }
 
-        public void ViewSideInItemMessage(Item _Item, Vector3 _PlayerPos, float _Dist)
+        public void ViewSideInItemMessage(Item _Item, Vector3 _ItemPos, Vector3 _PlayerPos, float _Dist)
         {
-            transform.localPosition = _Item.transform.localPosition;
+            transform.localPosition = _ItemPos; // _ItemPos은 로컬포지션으로
 
             ShowMessage(MessageStyle.ON_HEAD_MSG, _Item.itemName + "을/를 습득하기", _PlayerPos);
 
-            StartCoroutine(UpdateItemMessagePos(_Item, _PlayerPos, _Dist));     
+            StartCoroutine(UpdateItemMessagePos(_Item, _ItemPos, _PlayerPos, _Dist));     
         }
 
 
 
         #region 코루틴
-        IEnumerator UpdateItemMessagePos(Item _Item, Vector3 _PlayerPos, float _Dist)
+        IEnumerator UpdateItemMessagePos(Item _Item, Vector3 _ItemPos, Vector3 _PlayerPos, float _Dist)
         {
             yield return new WaitForSeconds(0.5f);
             while (true)
             {
-                if (Vector3.Distance(_PlayerPos, _Item.transform.localPosition) < _Dist)
+                if (Vector3.Distance(_PlayerPos, _ItemPos) < _Dist)
                 {
                     this.gameObject.SetActive(true);
 

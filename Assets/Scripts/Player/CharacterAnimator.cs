@@ -143,9 +143,10 @@ public class CharacterAnimator : MonoBehaviour
         {
             m_LiveModel.SetActive(false);
             GameObject eff = Instantiate(prefab_DeadEffect);
-            Manager_Ingame.Instance.Add_Round_Object(eff);
             eff.transform.position = transform.position;
-            DeathCam.Instance.InvokeDeathCamera(GetAnimatedGuardAction(eff.transform), eff.transform);
+            DeathCam deathCam = new DeathCam();
+            deathCam.InvokeDeathCamera(GetAnimatedGuardAction(eff.transform), eff.transform);
+            Manager_Ingame.Instance.Add_Round_Object(eff);
         }
     }
 

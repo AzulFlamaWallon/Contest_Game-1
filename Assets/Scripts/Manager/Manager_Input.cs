@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
 using static UnityEngine.InputSystem.InputAction;
+//using UnityEngine.Experimental.Input;
 
 public class Event_Input_Projection : UnityEvent<bool> { }
 public class Manager_Input : SingleToneMonoBehaviour<Manager_Input>
@@ -152,7 +153,11 @@ public class Manager_Input : SingleToneMonoBehaviour<Manager_Input>
     {
         if (!ui.Can_Move())
             return;
-        m_Player_Input.Interact = _context.ReadValueAsButton();
+        Keyboard keyboard = InputSystem.GetDevice<Keyboard>();
+        m_Player_Input.Interact = keyboard.eKey.wasPressedThisFrame;
+        Debug.Log("이새끼 눌렀음 ㅇㅇ");
+        //m_Player_Input.Interact = _context.ReadValueAsButton();
+        
     }
     /// <summary>
     /// 발사

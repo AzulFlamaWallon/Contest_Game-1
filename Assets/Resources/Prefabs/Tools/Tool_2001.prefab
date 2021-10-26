@@ -127,19 +127,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e28f0ab19e046684587cbaacaa2b30b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  item_data:
-    IID: 0
-    OID: 0
-    Position: {x: 0, y: 0, z: 0}
-    Rotation: {x: 0, y: 0, z: 0}
-  itemID: 0
-  itemType: 0
-  itemName: 
-  itemDesc: 
-  isUseEnergy: 0
-  itemCount: 0
-  itemEnergy: 0
-  isActive: 0
+  item: {fileID: 11400000, guid: b839415e6f732604783fae75def223f3, type: 2}
 --- !u!135 &2599499796402632851
 SphereCollider:
   m_ObjectHideFlags: 0

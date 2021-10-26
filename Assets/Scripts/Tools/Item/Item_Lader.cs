@@ -1,19 +1,25 @@
 ﻿using UnityEngine;
 
-public class Item_Lader : Item
+public class Item_Lader : ItemBase
 {
     public Shader Shader_Glow;
     public float dist;
 
     void Awake()
     {
-        itemID = 1001;
-        itemType = ItemType.REINFORCE;
-        itemName = "레이더";
-        itemCount = 0;
-        itemDesc = "가드가 주변에 있을 때 아웃라인으로 표시됨";
+        item.itemID = 1001;
+        item.itemType = ItemType.REINFORCE;
+        item.itemName = "레이더";
+        item.itemCount = 0;
+        item.itemDesc = "가드가 주변에 있을 때 아웃라인으로 표시됨";
     }
-    public override void Item_Active()
+
+    public override void Init(GameObject _Obj)
+    {
+
+    }
+
+    public void Lader()
     {
         CharacterController owner = gameObject.GetComponentInParent<CharacterController>();
         Vector3 ownerpos = owner.m_MyProfile.Current_Pos;
@@ -47,10 +53,5 @@ public class Item_Lader : Item
 
 
 
-    }
-
-    public override void Item_Passive()
-    {
-        // 라운드 종료
     }
 }

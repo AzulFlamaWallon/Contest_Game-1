@@ -420,7 +420,7 @@ public class Manager_Ingame : SingleToneMonoBehaviour<Manager_Ingame>
             GameObject item_object = Instantiate(item_prefab);
             item_object.transform.position = item.Position;
             item_object.transform.rotation = Quaternion.Euler(item.Rotation);
-            Item item_script = item_object.GetComponent<Item>();
+            Item item_script = item_object.GetComponent<ItemBase>().item;
             if (item_script == null)
             {
                 Debug.LogWarning(item.OID + "번 아이템 내에 Item 스크립트 없음");

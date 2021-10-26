@@ -2,30 +2,13 @@
 using UnityEngine;
 
 [Serializable]
-public class PelletTrail : MonoBehaviour
+public class PelletTrail : TrailBase
 {
     public Pellet pellet;
-    TrailRenderer trail;
-    [HideInInspector]
-    public Vector3 rayPositon;
 
-    public void Start()
+    public override void UpdateTrailPositon()
     {
-        trail = GetComponent<TrailRenderer>();
-
-        if (!trail.autodestruct)
-            Destroy(gameObject, trail.time);
-    }
-
-    public void Update()
-    {
-        if (trail != null) // 트레일이 있을때만 연산하자
-            transform.position = Vector3.Lerp(transform.position, rayPositon, Time.deltaTime * pellet.pelletSpeed);
-    }
-
-    public void OnDestroy()
-    {
-        if (trail != null || gameObject != null) // 혹시라도 삭제가 되지 않았다면
-            Destroy(gameObject);
+        this.speed = pellet.pelletSpeed;
+        base.UpdateTrailPositon();
     }
 }

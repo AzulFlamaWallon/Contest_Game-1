@@ -5,20 +5,19 @@ using UnityEngine.Playables;
 using Greyzone.GUI;
 
 /// <summary>
-/// 데스 카메라 컨트롤 클래스입니다.
-/// 
+/// 데스 카메라 클래스입니다.
+/// 0912 잘안됐던 이거 고쳐놓자.
 /// </summary>
-public class DeathCam : SingleToneMonoBehaviour<DeathCam>
+public class DeathCam : MonoBehaviour
 {
     public GameObject DeathCamTimeline;
     private PlayableDirector playableDirector;
     public CinemachineVirtualCamera[] VCams = new CinemachineVirtualCamera[4];
 
-    public Transform Killer;
-    public Transform DeadPlayer;
-
     private CinemachineBrain DeathCamBrain;
     public GameObject DeathCamBrainObject;
+
+    private Transform DeadPlayer;
 
     IEnumerator Start()
     {
@@ -27,22 +26,15 @@ public class DeathCam : SingleToneMonoBehaviour<DeathCam>
         DeathCamBrain = DeathCamBrainObject.GetComponent<CinemachineBrain>();
     }
 
-    public void FindSetDeathPlayer(ref Transform _Ragdoll)
+    public void FindSetDeathPlayer(Transform _Killer, Transform _Ragdoll)
     {
-        BindTarget(0, ref Killer, ref _Ragdoll);    //Back
-        BindTarget(1, ref _Ragdoll, ref Killer);    //Front
-        BindTarget(2, ref Killer, ref _Ragdoll);    //Left
-        BindTarget(3, ref _Ragdoll, ref Killer);    //Right
-
-        DeadPlayer = _Ragdoll;
+        BindTarget(0,  _Killer,  _Ragdoll);    //Back
+        BindTarget(1,  _Ragdoll, _Killer);    //Front
+        BindTarget(2, _Killer,  _Ragdoll);    //Left
+        BindTarget(3,  _Ragdoll, _Killer);    //Right
     }
 
-    public void FindSetKillPlayer(ref Transform _Killer)
-    {
-        Killer = _Killer;
-    }
-
-    void BindTarget(byte _CamIndex, ref Transform _LookAt, ref Transform _Follow)
+    void BindTarget(byte _CamIndex,  Transform _LookAt,  Transform _Follow)
     {
         VCams[_CamIndex].LookAt = _LookAt;
         VCams[_CamIndex].Follow = _Follow;
@@ -60,14 +52,12 @@ public class DeathCam : SingleToneMonoBehaviour<DeathCam>
         }
     }
 
-    public void InvokeDeathCamera(ref Transform _Killer, ref Transform _Target)
+    public void InvokeDeathCamera(Transform _Killer, Transform _Target)
     {
         gameObject.SetActive(true);
-        FindSetKillPlayer(ref _Killer);
-        FindSetDeathPlayer(ref _Target);
-        DeathCamBrainObject.GetComponentInParent<GameObject>().SetActive(true);
+        FindSetDeathPlayer(_Killer, _Target);
+        DeadPlayer = _Target;
         DeathCamBrainObject.SetActive(true);
-        DeathCamTimeline.GetComponentInParent<GameObject>().SetActive(true);
         DeathCamTimeline.SetActive(true);
         StartCam();
     }
@@ -89,8 +79,6 @@ public class DeathCam : SingleToneMonoBehaviour<DeathCam>
         TooltipManager.Instance.tooltip_HeadMessage.HideMessage();
         DeathCamBrainObject.SetActive(false);        
         DeathCamTimeline.SetActive(false);
-        DeathCamBrainObject.GetComponentInParent<GameObject>().SetActive(false);
-        DeathCamTimeline.GetComponentInParent<GameObject>().SetActive(false);
         gameObject.SetActive(false);
         yield return null;
     }
